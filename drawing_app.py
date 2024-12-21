@@ -25,6 +25,8 @@ class DrawingApp:
         self.canvas.bind('<B1-Motion>', self.paint)
         self.canvas.bind('<ButtonRelease-1>', self.reset)
 
+        self.canvas.bind('<Button-3>', self.pick_color)
+
     def setup_ui(self):
         """
         Настраивает пользовательский интерфейс с инструментами.
@@ -108,6 +110,14 @@ class DrawingApp:
         Восстанавливает исходный цвет пера при переключении обратно на инструмент «Кисть».
         """
         self.pen_color = self.eraser_color
+
+    def pick_color(self, event):
+        """
+        Выбирает цвет пипеткой на основе цвета пикселя под курсором мыши.
+        """
+        x, y = event.x, event.y
+        color = self.image.getpixel((x, y))
+        self.pen_color = '#{:02x}{:02x}{:02x}'.format(*color)
 
     def save_image(self):
         """
