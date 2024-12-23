@@ -56,6 +56,13 @@ class DrawingApp:
                                              command=self.update_brush_size)
         self.brush_size_menu.pack(side=tk.LEFT)
 
+    def bind_shortcuts(self):
+        """
+        Настраивает горячие клавиши для приложения.
+        """
+        self.root.bind('<Control-s>', lambda event: self.save_image(event))
+        self.root.bind('<Control-c>', lambda event: self.choose_color(event))
+
     def paint(self, event):
         """
         Рисует линию на холсте и обновляет изображение с новой линией.
@@ -84,7 +91,7 @@ class DrawingApp:
         self.image = Image.new("RGB", (600, 400), "white")
         self.draw = ImageDraw.Draw(self.image)
 
-    def choose_color(self):
+    def choose_color(self, event=None):
         """
         Открывает диалоговое окно выбора цвета и обновляет цвет кисти.
         """
@@ -119,7 +126,7 @@ class DrawingApp:
         color = self.image.getpixel((x, y))
         self.pen_color = '#{:02x}{:02x}{:02x}'.format(*color)
 
-    def save_image(self):
+    def save_image(self, event=None):
         """
         Открывает диалоговое окно сохранения файла для сохранения изображения в формате PNG.
         """
@@ -134,6 +141,7 @@ class DrawingApp:
 def main():
     root = tk.Tk()
     app = DrawingApp(root)
+    app.bind_shortcuts()
     root.mainloop()
 
 
