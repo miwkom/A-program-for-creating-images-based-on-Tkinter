@@ -16,11 +16,12 @@ class DrawingApp:
         self.canvas = tk.Canvas(root, width=600, height=400, bg='white')
         self.canvas.pack()
 
+        self.pen_color = 'black'
+        self.eraser_color = self.pen_color
+
         self.setup_ui()
 
         self.last_x, self.last_y = None, None
-        self.pen_color = 'black'
-        self.eraser_color = self.pen_color
 
         self.canvas.bind('<B1-Motion>', self.paint)
         self.canvas.bind('<ButtonRelease-1>', self.reset)
@@ -39,6 +40,9 @@ class DrawingApp:
 
         color_button = tk.Button(control_frame, text="Выбрать цвет", command=self.choose_color)
         color_button.pack(side=tk.LEFT)
+
+        self.selected_color = tk.Label(control_frame, width=2, bg=self.pen_color)
+        self.selected_color.pack(side=tk.LEFT)
 
         brush_button = tk.Button(control_frame, text="Кисть", command=self.use_brush)
         brush_button.pack(side=tk.LEFT)
@@ -96,6 +100,7 @@ class DrawingApp:
         Открывает диалоговое окно выбора цвета и обновляет цвет кисти.
         """
         self.pen_color = colorchooser.askcolor(color=self.pen_color)[1]
+        self.selected_color.config(bg=self.pen_color)
 
     def update_brush_size(self, event):
         """
@@ -117,6 +122,7 @@ class DrawingApp:
         Восстанавливает исходный цвет пера при переключении обратно на инструмент «Кисть».
         """
         self.pen_color = self.eraser_color
+        self.selected_color.config(bg=self.pen_color)
 
     def pick_color(self, event):
         """
@@ -125,6 +131,7 @@ class DrawingApp:
         x, y = event.x, event.y
         color = self.image.getpixel((x, y))
         self.pen_color = '#{:02x}{:02x}{:02x}'.format(*color)
+        self.selected_color.config(bg=self.pen_color)
 
     def save_image(self, event=None):
         """
