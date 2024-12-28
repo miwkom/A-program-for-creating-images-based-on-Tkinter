@@ -10,7 +10,7 @@ class DrawingApp:
         self.root = root
         self.root.title("Рисовалка с сохранением в PNG")
 
-        self.image = Image.new("RGB", (500, 400), "white")
+        self.image = Image.new("RGB", (600, 400), "white")
         self.draw = ImageDraw.Draw(self.image)
 
         self.canvas = tk.Canvas(root, width=600, height=400, bg='white', bd=0, highlightthickness=0)
@@ -58,6 +58,12 @@ class DrawingApp:
         self.brush_size_menu = tk.OptionMenu(control_frame, self.brush_size_var, *sizes,
                                              command=self.update_brush_size)
         self.brush_size_menu.pack(side=tk.LEFT, padx=1)
+
+        text_button = tk.Button(control_frame, text="Текст", command=self.add_text)
+        text_button.pack(side=tk.LEFT, padx=1)
+
+        background_button = tk.Button(control_frame, text="Изменить задний фон", command=self.change_background)
+        background_button.pack(side=tk.LEFT, padx=1)
 
     def setup_menu(self):
         """
@@ -165,6 +171,31 @@ class DrawingApp:
             self.draw = ImageDraw.Draw(self.image)
             self.canvas.config(width=x, height=y)
             self.clear_canvas()
+
+    def add_text(self):
+        """
+        Открывает диалоговое окно для ввода пользователем и добавляет текст на холст в выбранном месте.
+        """
+        text = tk.simpledialog.askstring("Добавить текст", "Введите текст:", parent=self.root)
+        if text:
+            self.canvas.bind('<Button-1>', self.add_text_to_canvas)
+            self.text_to_add = text
+
+    def add_text_to_canvas(self, event):
+        """
+        Добавляет введенный текст на холст в выбранном месте.
+        """
+        self.canvas.create_text(event.x, event.y, text=self.text_to_add, fill=self.pen_color)
+        self.draw.text((event.x, event.y), self.text_to_add, fill=self.pen_color)
+        self.canvas.unbind('<Button-1>')
+
+    def change_background(self):
+        """
+        Открывает диалоговое окно для выбора цвета фона и изменяет цвет фона холста.
+        """
+        new_color = colorchooser.askcolor(color=self.canvas.cget('background'))[1]
+        if new_color:
+            self.canvas.config(background=new_color)
 
 
     def save_image(self, event=None):
